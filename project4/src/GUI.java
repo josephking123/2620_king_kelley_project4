@@ -1,43 +1,40 @@
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.*;
 
-public class GUI extends JFrame {
-
-    private JButton loadFilesButton;
-    private JButton createWordCloudButton;
-    private JPanel buttonPanel;
+public class GUI {
+    private JFrame frame;
     private WordCloudGenerator wordCloudGenerator;
 
-    public GUI() {
-        super("Gutenberg Word Cloud");
+    public GUI(WordCloudGenerator wordCloudGenerator) {
+        this.wordCloudGenerator = wordCloudGenerator;
+        initialize();
+    }
 
-        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        setSize(800, 600);
+    private void initialize() {
+        frame = new JFrame("Word Cloud Generator");
+        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        frame.setSize(800, 600);
+        frame.setLayout(new BorderLayout());
 
-        wordCloudGenerator = new WordCloudGenerator();
+        JTextArea wordCloudArea = new JTextArea();
+        JScrollPane scrollPane = new JScrollPane(wordCloudArea);
+        frame.add(scrollPane, BorderLayout.CENTER);
 
-        buttonPanel = new JPanel();
-        loadFilesButton = new JButton("Load Files from Gutenberg Library");
-        createWordCloudButton = new JButton("Generate Word Cloud");
+        JPanel filterPanel = new JPanel();
+        filterPanel.setLayout(new FlowLayout());
 
-        loadFilesButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                //will contain method from FileReader class that reads the selected files
-            }
-        });
+        JButton generateButton = new JButton("Generate Word Cloud");
+        generateButton.addActionListener(e -> generateWordCloud());
+        frame.add(generateButton, BorderLayout.SOUTH);
 
-        createWordCloudButton.addActionListener(new ActionListener() {
-            public void actionPerformed(ActionEvent e) {
-                //will contain method from WordCloudGenerator that creates the word cloud
-            }
-        });
+        frame.setVisible(true);
+    }
 
-        buttonPanel.add(loadFilesButton);
-        buttonPanel.add(createWordCloudButton);
+    private void applyFilters() {
+       //will contain methods to add filters whenever filters are added
+    }
 
-        add(buttonPanel, BorderLayout.NORTH);
+    private void generateWordCloud() {
 
-        setVisible(true);
     }
 }

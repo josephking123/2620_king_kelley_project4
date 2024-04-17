@@ -1,38 +1,71 @@
 import javax.swing.*;
 import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 
-public class GUI {
-    private JFrame frame;
+public class GUI extends JFrame {
 
-    private WordCloudGenerator wordCloudGenerator;
+    private JFileChooser fileChooser;
+    private JButton loadButton;
+    private JButton generateButton;
+    private JPanel infoPanel;
+    private JPanel filterPanel;
+    private JTextArea wordCloudArea;
 
-    public GUI(WordCloudGenerator wordCloudGenerator) {
-        this.wordCloudGenerator = wordCloudGenerator;
-       
-        frame = new JFrame("Word Cloud Generator");
-        frame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
-        frame.setSize(800, 600);
+    public GUI() {
+        super("Word Cloud Generator");
+        setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
+        setSize(800, 600);
 
-
-        JTextArea wordCloudArea = new JTextArea();
+        wordCloudArea = new JTextArea();
         JScrollPane scrollPane = new JScrollPane(wordCloudArea);
-        frame.add(scrollPane, BorderLayout.CENTER);
+        add(scrollPane, BorderLayout.CENTER);
 
-        JPanel filterPanel = new JPanel();
+        filterPanel = new JPanel();
         filterPanel.setLayout(new FlowLayout());
 
-        JButton generateButton = new JButton("Generate Word Cloud");
-        generateButton.addActionListener(e -> generateWordCloud());
-        frame.add(generateButton, BorderLayout.NORTH);
+        generateButton = new JButton("Generate Word Cloud");
+        loadButton = new JButton("Select Folder");
 
-        frame.setVisible(true);
+        loadButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                selectFolder();
+            }
+        });
+
+        generateButton.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                generateWordCloud();
+            }
+        });
+
+        infoPanel = new JPanel();
+        infoPanel.setLayout(new BorderLayout());
+        infoPanel.add(loadButton, BorderLayout.WEST);
+        infoPanel.add(generateButton, BorderLayout.EAST);
+
+        add(infoPanel, BorderLayout.NORTH);
+        add(filterPanel, BorderLayout.SOUTH);
+
+        setVisible(true);
     }
 
-    private void applyFilters() {
-       //will contain methods to add filters whenever filters are added
+    private void selectFolder() {
+        fileChooser = new JFileChooser();
+        fileChooser.setFileSelectionMode(JFileChooser.DIRECTORIES_ONLY);
+        int result = fileChooser.showOpenDialog(this);
+        if (result == JFileChooser.APPROVE_OPTION) {
+            String folderPath = fileChooser.getSelectedFile().getPath();
+            DataHandler dataHandler = new DataHandler(folderPath);
+            Thread thread = new Thread(dataHandler);
+            thread.start();
+            JOptionPane.showMessageDialog(this, "Folder selected successfully!");
+        }
     }
 
     private void generateWordCloud() {
-
+        // Implement word cloud generation here
     }
 }

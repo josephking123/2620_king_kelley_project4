@@ -8,10 +8,13 @@ import java.util.Map;
 import java.util.Set;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
+import com.kennycason.kumo.WordCloud;
 
 public class DataHandler implements Runnable {
     private Map<String, Integer> wordFrequencyMap;
     private Set<String> encounteredWords;
+    private WordCloudGenerator gen;
+    private WordCloud cloud;
 
     public DataHandler(String folderPath) {
         wordFrequencyMap = new HashMap<>();
@@ -39,6 +42,8 @@ public class DataHandler implements Runnable {
                     }
                 }
             }
+            this.gen = new WordCloudGenerator(wordFrequencyMap, encounteredWords);
+            cloud = gen.getCloud();
         }
     }
 
@@ -63,6 +68,7 @@ public class DataHandler implements Runnable {
         } catch (IOException e) {
             e.printStackTrace();
         }
+        
     }
 
     public Map<String, Integer> getWordFrequencyMap() {
@@ -71,6 +77,10 @@ public class DataHandler implements Runnable {
 
     public Set<String> getEncounteredWords() {
         return encounteredWords;
+    }
+
+    public WordCloud getCloud() {
+        return cloud;
     }
 
 }

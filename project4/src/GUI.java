@@ -1,7 +1,6 @@
 import javax.swing.*;
 import javax.xml.crypto.Data;
 
-import com.kennycason.kumo.Word;
 import com.kennycason.kumo.WordCloud;
 
 import java.awt.*;
@@ -29,9 +28,6 @@ public class GUI extends JFrame {
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
 
-        this.generateWordCloud();
-        BufferedImage img = cloud.getBufferedImage();
-        image = new JLabel(new ImageIcon(img));
         JScrollPane scrollPane = new JScrollPane(image);
         add(scrollPane, BorderLayout.CENTER);
 
@@ -98,8 +94,8 @@ public class GUI extends JFrame {
         int result = fileChooser.showOpenDialog(this);
         if (result == JFileChooser.APPROVE_OPTION) {
             String folderPath = fileChooser.getSelectedFile().getPath();
-            DataHandler dataHandler = new DataHandler(folderPath);
-            Thread thread = new Thread(dataHandler);
+            handler = new DataHandler(folderPath);
+            Thread thread = new Thread(handler);
             thread.start();
             JOptionPane.showMessageDialog(this, "Folder selected successfully!");
         }
@@ -109,6 +105,8 @@ public class GUI extends JFrame {
         // Implement word cloud generation here
         this.cloudGen = new WordCloudGenerator(handler.getWordFrequencyMap(), handler.getEncounteredWords());
         this.cloud = cloudGen.getCloud();
+        BufferedImage img = cloud.getBufferedImage();
+        image = new JLabel(new ImageIcon(img));
     }
 
     private void applyFilters() {

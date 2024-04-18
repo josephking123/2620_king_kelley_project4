@@ -68,4 +68,9 @@ public class DataHandler implements Runnable {
     public Map<String, Integer> getWordFrequencyMap() {
         return wordFrequencyMap;
     }
+
+    public Set<String> getEncounteredWords() {
+        return encounteredWords;
+    }
+
 }

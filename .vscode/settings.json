@@ -1,0 +1,6 @@
+{
+    "java.project.referencedLibraries": [
+        "lib/**/*.jar",
+        "project4/lib/kumo-1.8.jar"
+    ]
+}

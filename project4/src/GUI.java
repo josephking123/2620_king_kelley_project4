@@ -1,7 +1,13 @@
 import javax.swing.*;
+import javax.xml.crypto.Data;
+
+import com.kennycason.kumo.Word;
+import com.kennycason.kumo.WordCloud;
+
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.image.BufferedImage;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -12,16 +18,21 @@ public class GUI extends JFrame {
     private JButton generateButton;
     private JPanel infoPanel;
     private JPanel filterPanel;
-    private JTextArea wordCloudArea;
+    private JLabel image;
     private List<Filter> filters;
+    private DataHandler handler;
+    private WordCloudGenerator cloudGen;
+    private WordCloud cloud;
 
     public GUI() {
         super("Word Cloud Generator");
         setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         setSize(800, 600);
 
-        wordCloudArea = new JTextArea();
-        JScrollPane scrollPane = new JScrollPane(wordCloudArea);
+        this.generateWordCloud();
+        BufferedImage img = cloud.getBufferedImage();
+        image = new JLabel(new ImageIcon(img));
+        JScrollPane scrollPane = new JScrollPane(image);
         add(scrollPane, BorderLayout.CENTER);
 
         filterPanel = new JPanel();
@@ -96,14 +107,16 @@ public class GUI extends JFrame {
 
     private void generateWordCloud() {
         // Implement word cloud generation here
+        this.cloudGen = new WordCloudGenerator(handler.getWordFrequencyMap(), handler.getEncounteredWords());
+        this.cloud = cloudGen.getCloud();
     }
 
     private void applyFilters() {
-        String text = wordCloudArea.getText();
+        String text = image.getText();
         for (Filter filter : filters) {
             text = applyFilter(text, filter);
         }
-        wordCloudArea.setText(text);
+        image.setText(text);
     }
 
     private String applyFilter(String text, Filter filter) {

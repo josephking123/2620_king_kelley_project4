@@ -1,3 +1,4 @@
+import javax.swing.JProgressBar;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
@@ -12,16 +13,18 @@ import java.util.regex.Pattern;
 public class DataHandler implements Runnable {
     private Map<String, Integer> wordFrequencyMap;
     private Set<String> encounteredWords;
+    private JProgressBar progressBar;
 
-    public DataHandler(String folderPath) {
+    public DataHandler(String folderPath, JProgressBar progressBar) {
         wordFrequencyMap = new HashMap<>();
         encounteredWords = new HashSet<>();
+        this.progressBar = progressBar;
         scanFolder(folderPath);
     }
 
     @Override
     public void run() {
-        
+        // Empty for now
     }
 
     private void scanFolder(String folderPath) {
@@ -29,13 +32,15 @@ public class DataHandler implements Runnable {
         if (folder.isDirectory()) {
             File[] files = folder.listFiles();
             if (files != null) {
+                int totalFiles = files.length;
+                int scannedFiles = 0;
                 for (File file : files) {
                     if (file.isFile() && file.getName().endsWith(".txt")) {
                         readDataFromFile(file.getAbsolutePath());
+                        scannedFiles++;
+                        updateProgressBar(scannedFiles, totalFiles);
                     } else if (file.isDirectory()) {
-                        DataHandler subfolderHandler = new DataHandler(file.getAbsolutePath());
-                        Thread thread = new Thread(subfolderHandler);
-                        thread.start();
+                        scanFolder(file.getAbsolutePath()); 
                     }
                 }
             }
@@ -58,10 +63,18 @@ public class DataHandler implements Runnable {
                     }
                 }
             }
+            System.out.println("Successfully read data from file: " + filePath);
         } catch (IOException e) {
             e.printStackTrace();
+            System.err.println("Error reading data from file: " + filePath);
         }
-        
+    }
+
+    private synchronized void updateProgressBar(int scannedFiles, int totalFiles) {
+        if (progressBar != null) {
+            int progress = (int) (((double) scannedFiles / totalFiles) * 100);
+            progressBar.setValue(progress);
+        }
     }
 
     public Map<String, Integer> getWordFrequencyMap() {
@@ -71,5 +84,4 @@ public class DataHandler implements Runnable {
     public Set<String> getEncounteredWords() {
         return encounteredWords;
     }
-
 }

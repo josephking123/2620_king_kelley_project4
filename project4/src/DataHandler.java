@@ -63,7 +63,6 @@ public class DataHandler implements Runnable {
                     }
                 }
             }
-            System.out.println("Successfully read data from file: " + filePath);
         } catch (IOException e) {
             e.printStackTrace();
             System.err.println("Error reading data from file: " + filePath);
